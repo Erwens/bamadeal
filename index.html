@@ -857,7 +857,7 @@ async function handlePayment() {
     if (pmError) { showErr(pmError.message); btn.classList.remove('loading'); btn.disabled = false; return; }
 
     // Step 2 — Call Netlify Function to create PaymentIntent
-    const res = await fetch('/.netlify/functions/create-payment-intent', {
+    const res = await fetch('/.netlify/functions/create-payment-intent_1', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
