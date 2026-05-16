@@ -1,0 +1,1140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BA.MA DEAL — The Digital Growth OS</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://js.stripe.com/v3/"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --black: #080808; --white: #F0EDE8; --gold: #C9A84C;
+  --gold-dim: rgba(201,168,76,0.15); --gold-line: rgba(201,168,76,0.3);
+  --muted: #555; --surface: #111; --card: #161616;
+  --green: #4ade80; --red: #f87171;
+  --transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  --border-subtle: rgba(255,255,255,0.05);
+  --border-mid: rgba(255,255,255,0.03);
+  --text-dim: rgba(240,237,232,0.7);
+  --text-quote: rgba(240,237,232,0.75);
+  --hero-border: rgba(240,237,232,0.06);
+}
+
+/* LIGHT MODE */
+[data-theme="light"] {
+  --black: #F7F4EE;
+  --white: #0F0A04;
+  --surface: #EDE8DE;
+  --card: #E2DCCE;
+  --muted: #4A4035;
+  --gold: #A8762A;
+  --gold-dim: rgba(168,118,42,0.12);
+  --gold-line: rgba(168,118,42,0.4);
+  --border-subtle: rgba(0,0,0,0.07);
+  --border-mid: rgba(0,0,0,0.05);
+  --text-dim: rgba(15,10,4,0.65);
+  --text-quote: rgba(15,10,4,0.7);
+  --hero-border: rgba(15,10,4,0.08);
+}
+[data-theme="light"] body { background: var(--black); color: var(--white); }
+[data-theme="light"] nav { background: rgba(247,244,238,0.95); border-bottom-color: rgba(168,118,42,0.2); }
+[data-theme="light"] .nav-links a { color: #4A4035; }
+[data-theme="light"] .nav-links a:hover { color: var(--gold); }
+[data-theme="light"] .nav-cta { border-color: var(--gold); color: var(--gold); }
+[data-theme="light"] .nav-cta:hover { background: var(--gold); color: #fff; }
+[data-theme="light"] .section-label { color: var(--gold); }
+[data-theme="light"] .marquee-wrap { background: var(--surface); }
+[data-theme="light"] .problem-solution { background: var(--surface); }
+[data-theme="light"] .ps-col.problem { background: rgba(200,50,50,0.05); }
+[data-theme="light"] .ps-col.solution { background: rgba(168,118,42,0.1); }
+[data-theme="light"] .service-card { background: var(--surface); }
+[data-theme="light"] .service-card:hover { background: var(--card); }
+[data-theme="light"] .intel-section { background: var(--surface); }
+[data-theme="light"] .price-card { background: var(--surface); }
+[data-theme="light"] .price-card.featured { background: rgba(168,118,42,0.12); border-color: rgba(168,118,42,0.4); }
+[data-theme="light"] .price-amount { color: #0F0A04; }
+[data-theme="light"] .proof-card { background: var(--surface); border-color: rgba(168,118,42,0.2); }
+[data-theme="light"] .cta-final { background: rgba(168,118,42,0.08); }
+[data-theme="light"] .modal { background: var(--surface); }
+[data-theme="light"] .order-pkg strong { color: #0F0A04; }
+[data-theme="light"] body::before { opacity: 0.08; }
+
+html { scroll-behavior: smooth; }
+body { font-family: 'DM Sans', sans-serif; background: var(--black); color: var(--white); overflow-x: hidden; transition: var(--transition); }
+@media (pointer: fine) { body { cursor: none; } }
+
+/* THEME TOGGLE BUTTON - removed */
+.cursor { width: 10px; height: 10px; background: var(--gold); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9999; transform: translate(-50%,-50%); transition: transform 0.15s, opacity 0.15s; display:none; }
+.cursor-ring { width: 36px; height: 36px; border: 1px solid var(--gold-line); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9998; transform: translate(-50%,-50%); display:none; }
+@media (pointer: fine) { .cursor, .cursor-ring { display: block; } }
+body::before { content:''; position:fixed; inset:0; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E"); pointer-events:none; z-index:1; opacity:0.4; }
+
+/* NAV */
+nav { position:fixed; top:0; left:0; right:0; z-index:100; display:flex; align-items:center; justify-content:space-between; padding:20px 48px; border-bottom:1px solid rgba(201,168,76,0.1); background:rgba(8,8,8,0.9); backdrop-filter:blur(16px); }
+.nav-logo { font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:3px; color:var(--white); text-decoration:none; }
+.nav-logo span { color:var(--gold); }
+.nav-links { display:flex; gap:36px; list-style:none; }
+.nav-links a { font-size:12px; letter-spacing:2px; text-transform:uppercase; color:var(--muted); text-decoration:none; transition:color 0.2s; }
+.nav-links a:hover { color:var(--gold); }
+.nav-cta { font-size:12px; letter-spacing:2px; text-transform:uppercase; padding:10px 24px; border:1px solid var(--gold); color:var(--gold); background:transparent; text-decoration:none; transition:all 0.2s; }
+.nav-cta:hover { background:var(--gold); color:var(--black); }
+
+/* HERO */
+.hero { min-height:100vh; display:flex; flex-direction:column; justify-content:center; align-items:flex-start; padding:140px 48px 80px; position:relative; overflow:hidden; }
+.hero-badge { display:inline-flex; align-items:center; gap:8px; border:1px solid var(--gold-line); padding:6px 16px; border-radius:2px; font-size:11px; letter-spacing:3px; text-transform:uppercase; color:var(--gold); margin-bottom:36px; animation:fadeUp 0.8s ease both; }
+.hero-badge span { width:6px; height:6px; background:var(--gold); border-radius:50%; animation:pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+.hero h1 { font-family:'Bebas Neue',sans-serif; font-size:clamp(64px,10vw,140px); line-height:0.9; letter-spacing:2px; max-width:900px; animation:fadeUp 0.8s 0.1s ease both; }
+.hero h1 .outline { -webkit-text-stroke:1px var(--gold); color:transparent; }
+.hero-sub { font-size:16px; color:var(--muted); max-width:520px; line-height:1.7; margin-top:32px; animation:fadeUp 0.8s 0.2s ease both; }
+.hero-ctas { display:flex; gap:16px; margin-top:48px; animation:fadeUp 0.8s 0.3s ease both; flex-wrap:wrap; }
+.btn-primary { padding:16px 36px; background:var(--gold); color:var(--black); font-family:'Syne',sans-serif; font-size:13px; font-weight:700; letter-spacing:2px; text-transform:uppercase; text-decoration:none; transition:all 0.2s; display:inline-block; border:none; cursor:pointer; }
+.btn-primary:hover { background:#e0be6a; transform:translateY(-2px); }
+.btn-ghost { padding:16px 36px; border:1px solid var(--hero-border); color:var(--white); font-family:'Syne',sans-serif; font-size:13px; font-weight:600; letter-spacing:2px; text-transform:uppercase; text-decoration:none; transition:all 0.2s; display:inline-block; }
+.btn-ghost:hover { border-color:var(--gold); color:var(--gold); }
+.hero-stats { display:flex; gap:48px; margin-top:80px; padding-top:48px; border-top:1px solid var(--hero-border); animation:fadeUp 0.8s 0.4s ease both; flex-wrap:wrap; }
+.stat-num { font-family:'Bebas Neue',sans-serif; font-size:42px; color:var(--gold); line-height:1; }
+.stat-label { font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--muted); margin-top:4px; }
+.hero-grid { position:absolute; inset:0; pointer-events:none; z-index:0; background-image:linear-gradient(rgba(201,168,76,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(201,168,76,0.04) 1px,transparent 1px); background-size:80px 80px; }
+.hero > * { position:relative; z-index:1; }
+.hero-glow { position:absolute; top:20%; right:-10%; width:600px; height:600px; background:radial-gradient(circle,rgba(201,168,76,0.06) 0%,transparent 70%); pointer-events:none; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+
+section { padding:120px 48px; position:relative; }
+.section-label { font-size:11px; letter-spacing:4px; text-transform:uppercase; color:var(--gold); margin-bottom:16px; display:block; }
+.section-title { font-family:'Bebas Neue',sans-serif; font-size:clamp(42px,6vw,80px); line-height:0.95; letter-spacing:1px; }
+
+.marquee-wrap { overflow:hidden; border-top:1px solid rgba(201,168,76,0.1); border-bottom:1px solid rgba(201,168,76,0.1); padding:16px 0; background:var(--surface); }
+.marquee-track { display:flex; gap:64px; animation:marquee 20s linear infinite; white-space:nowrap; }
+.marquee-item { font-family:'Bebas Neue',sans-serif; font-size:13px; letter-spacing:4px; color:var(--muted); flex-shrink:0; }
+.marquee-item span { color:var(--gold); margin:0 8px; }
+@keyframes marquee { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+
+.problem-solution { background:var(--surface); border-top:1px solid rgba(201,168,76,0.1); border-bottom:1px solid rgba(201,168,76,0.1); }
+.ps-grid { display:grid; grid-template-columns:1fr 1fr; gap:2px; margin-top:64px; }
+.ps-col { padding:48px; }
+.ps-col.problem { background:rgba(255,50,50,0.03); }
+.ps-col.solution { background:var(--gold-dim); }
+.ps-col-label { font-size:11px; letter-spacing:3px; text-transform:uppercase; margin-bottom:32px; display:block; }
+.problem .ps-col-label { color:#ff5555; }
+.solution .ps-col-label { color:var(--gold); }
+.ps-item { display:flex; align-items:flex-start; gap:16px; margin-bottom:20px; }
+.ps-icon { width:24px; height:24px; flex-shrink:0; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; margin-top:2px; }
+.problem .ps-icon { background:rgba(255,85,85,0.15); color:#ff5555; }
+.solution .ps-icon { background:rgba(201,168,76,0.2); color:var(--gold); }
+.ps-item p { font-size:14px; line-height:1.6; color:var(--text-dim); }
+
+.services-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:rgba(201,168,76,0.1); margin-top:64px; border:1px solid rgba(201,168,76,0.1); }
+.service-card { background:var(--black); padding:40px; transition:background 0.3s; position:relative; overflow:hidden; }
+.service-card::before { content:''; position:absolute; bottom:0; left:0; right:0; height:2px; background:var(--gold); transform:scaleX(0); transition:transform 0.3s; transform-origin:left; }
+.service-card:hover { background:rgba(201,168,76,0.04); }
+.service-card:hover::before { transform:scaleX(1); }
+.service-number { font-family:'Bebas Neue',sans-serif; font-size:56px; color:rgba(201,168,76,0.15); line-height:1; margin-bottom:16px; }
+.service-icon { font-size:28px; margin-bottom:16px; display:block; }
+.service-name { font-family:'Syne',sans-serif; font-size:17px; font-weight:700; margin-bottom:12px; }
+.service-desc { font-size:13px; color:var(--muted); line-height:1.7; }
+.service-tag { display:inline-block; margin-top:20px; font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--gold); border:1px solid var(--gold-line); padding:4px 10px; }
+
+.intel-section { background:var(--surface); }
+.ticker-wrap { margin-top:48px; border:1px solid rgba(201,168,76,0.15); }
+.ticker-header { display:grid; grid-template-columns:40px 1fr 120px 100px; gap:16px; padding:12px 24px; border-bottom:1px solid rgba(201,168,76,0.1); font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--muted); }
+.ticker-row { display:grid; grid-template-columns:40px 1fr 120px 100px; gap:16px; padding:16px 24px; border-bottom:1px solid var(--border-mid); align-items:center; transition:background 0.2s; }
+.ticker-row:hover { background:var(--gold-dim); }
+.ticker-num { color:var(--muted); font-size:12px; }
+.ticker-niche { font-size:14px; font-weight:500; }
+.ticker-trend.up { color:#4ade80; font-size:12px; }
+.ticker-trend.flat { color:var(--muted); font-size:12px; }
+.ticker-change.pos { color:#4ade80; font-size:13px; font-weight:600; }
+
+/* PRICING */
+.pricing-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:rgba(201,168,76,0.1); margin-top:64px; }
+.price-card { background:var(--black); padding:40px 28px; position:relative; display:flex; flex-direction:column; }
+.price-card.featured { background:var(--gold-dim); border:1px solid var(--gold-line); }
+.price-badge { position:absolute; top:-1px; left:50%; transform:translateX(-50%); background:var(--gold); color:var(--black); font-size:9px; font-weight:700; letter-spacing:2px; text-transform:uppercase; padding:4px 14px; white-space:nowrap; }
+.price-tier { font-size:11px; letter-spacing:3px; text-transform:uppercase; color:var(--muted); margin-bottom:20px; }
+.price-amount { font-family:'Bebas Neue',sans-serif; font-size:52px; line-height:1; color:var(--white); }
+.price-amount sup { font-size:20px; vertical-align:top; margin-top:8px; }
+.price-desc { font-size:12px; color:var(--muted); margin:12px 0 24px; line-height:1.6; }
+.price-features { list-style:none; margin-bottom:32px; flex:1; }
+.price-features li { font-size:12px; padding:8px 0; border-bottom:1px solid var(--border-mid); display:flex; align-items:flex-start; gap:8px; color:var(--text-dim); }
+.price-features li::before { content:'—'; color:var(--gold); flex-shrink:0; }
+.price-cta { display:block; text-align:center; padding:14px; font-family:'Syne',sans-serif; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; text-decoration:none; transition:all 0.2s; margin-top:auto; border:none; cursor:pointer; width:100%; }
+.price-card:not(.featured) .price-cta { border:1px solid var(--border-subtle); color:var(--white); background:transparent; }
+.price-card:not(.featured) .price-cta:hover { border-color:var(--gold); color:var(--gold); background:var(--gold-dim); }
+.featured .price-cta { background:var(--gold); color:var(--black); }
+.featured .price-cta:hover { background:#e0be6a; }
+
+.proof-row { display:flex; gap:24px; margin-top:64px; flex-wrap:wrap; }
+.proof-card { flex:1; min-width:260px; border:1px solid rgba(201,168,76,0.12); padding:32px; background:var(--surface); }
+.proof-quote { font-size:14px; line-height:1.8; color:var(--text-quote); margin-bottom:24px; font-style:italic; }
+.proof-author { font-family:'Syne',sans-serif; font-size:13px; font-weight:700; }
+.proof-role { font-size:11px; color:var(--muted); letter-spacing:1px; margin-top:2px; }
+
+.faq-list { margin-top:64px; max-width:720px; }
+.faq-item { border-bottom:1px solid rgba(201,168,76,0.1); padding:24px 0; }
+.faq-q { font-family:'Syne',sans-serif; font-size:16px; font-weight:600; display:flex; justify-content:space-between; align-items:center; cursor:pointer; user-select:none; gap:16px; }
+.faq-q .toggle { color:var(--gold); font-size:20px; transition:transform 0.3s; flex-shrink:0; }
+.faq-a { font-size:14px; color:var(--muted); line-height:1.8; max-height:0; overflow:hidden; transition:max-height 0.4s ease, padding 0.3s; }
+.faq-item.open .faq-a { max-height:200px; padding-top:16px; }
+.faq-item.open .toggle { transform:rotate(45deg); }
+
+.cta-final { background:var(--gold-dim); border-top:1px solid var(--gold-line); border-bottom:1px solid var(--gold-line); text-align:center; padding:120px 48px; }
+.cta-final h2 { font-family:'Bebas Neue',sans-serif; font-size:clamp(52px,8vw,100px); line-height:0.95; margin-bottom:32px; }
+.cta-final h2 .outline { -webkit-text-stroke:1px var(--gold); color:transparent; }
+.cta-final p { font-size:15px; color:var(--muted); max-width:480px; margin:0 auto 48px; line-height:1.7; }
+
+footer { padding:48px; border-top:1px solid var(--border-subtle); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:24px; }
+.footer-logo { font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:3px; }
+.footer-logo span { color:var(--gold); }
+.footer-links { display:flex; gap:32px; flex-wrap:wrap; }
+.footer-links a { font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--muted); text-decoration:none; transition:color 0.2s; }
+.footer-links a:hover { color:var(--gold); }
+.footer-copy { font-size:11px; color:var(--muted); }
+.reveal { opacity:0; transform:translateY(32px); transition:opacity 0.7s ease,transform 0.7s ease; }
+.reveal.visible { opacity:1; transform:translateY(0); }
+
+/* ===== MODAL CHECKOUT ===== */
+.modal-overlay {
+  position:fixed; inset:0; background:rgba(0,0,0,0.85);
+  z-index:1000; display:flex; align-items:center; justify-content:center;
+  padding:20px; opacity:0; pointer-events:none;
+  transition:opacity 0.3s ease; backdrop-filter:blur(8px);
+}
+.modal-overlay.open { opacity:1; pointer-events:all; }
+
+.modal {
+  background:var(--surface); border:1px solid var(--gold-line);
+  width:100%; max-width:560px; max-height:90vh; overflow-y:auto;
+  position:relative; transform:translateY(20px);
+  transition:transform 0.3s ease;
+}
+.modal-overlay.open .modal { transform:translateY(0); }
+
+.modal-header {
+  padding:28px 32px 20px;
+  border-bottom:1px solid var(--border-subtle);
+  display:flex; align-items:center; justify-content:space-between;
+}
+.modal-header h3 { font-family:'Bebas Neue',sans-serif; font-size:28px; letter-spacing:1px; }
+.modal-close {
+  width:32px; height:32px; border:1px solid var(--border-subtle);
+  background:transparent; color:var(--muted); font-size:18px;
+  cursor:pointer; display:flex; align-items:center; justify-content:center;
+  transition:all 0.2s;
+}
+.modal-close:hover { border-color:var(--gold); color:var(--gold); }
+
+.modal-body { padding:28px 32px; }
+
+/* Package pills */
+.pkg-pills { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:28px; }
+.pkg-pill {
+  padding:8px 16px; border:1px solid var(--border-subtle);
+  background:transparent; color:var(--muted); font-family:'Syne',sans-serif;
+  font-size:11px; font-weight:700; letter-spacing:1px; text-transform:uppercase;
+  cursor:pointer; transition:all 0.2s;
+}
+.pkg-pill:hover { border-color:var(--gold-line); color:var(--white); }
+.pkg-pill.active { border-color:var(--gold); color:var(--gold); background:var(--gold-dim); }
+
+/* Order summary */
+.order-summary {
+  background:var(--gold-dim); border:1px solid var(--gold-line);
+  padding:16px 20px; margin-bottom:24px;
+  display:flex; justify-content:space-between; align-items:center;
+}
+.order-pkg { font-size:13px; color:var(--muted); }
+.order-pkg strong { color:var(--white); font-family:'Syne',sans-serif; font-size:14px; display:block; }
+.order-total { font-family:'Bebas Neue',sans-serif; font-size:36px; color:var(--gold); }
+
+/* Form */
+.field { margin-bottom:16px; }
+.field label { display:block; font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--muted); margin-bottom:6px; }
+.field input { width:100%; background:var(--card); border:1px solid var(--border-subtle); padding:12px 14px; color:var(--white); font-family:'DM Sans',sans-serif; font-size:14px; outline:none; transition:border-color 0.2s; }
+.field input::placeholder { color:var(--muted); }
+.field input:focus { border-color:var(--gold-line); }
+.field-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.stripe-el { background:var(--card); border:1px solid var(--border-subtle); padding:12px 14px; transition:border-color 0.2s; }
+.stripe-el.focused { border-color:var(--gold-line); }
+
+.pay-btn {
+  width:100%; padding:16px; background:var(--gold); color:var(--black);
+  border:none; font-family:'Syne',sans-serif; font-size:13px; font-weight:700;
+  letter-spacing:3px; text-transform:uppercase; cursor:pointer;
+  transition:all 0.2s; margin-top:8px;
+  display:flex; align-items:center; justify-content:center; gap:10px;
+}
+.pay-btn:hover:not(:disabled) { background:#e0be6a; }
+.pay-btn:disabled { opacity:0.5; cursor:not-allowed; }
+.spinner { width:16px; height:16px; border:2px solid rgba(0,0,0,0.2); border-top-color:var(--black); border-radius:50%; animation:spin 0.7s linear infinite; display:none; }
+.pay-btn.loading .spinner { display:block; }
+.pay-btn.loading .btn-txt { display:none; }
+@keyframes spin { to{transform:rotate(360deg)} }
+
+.msg { padding:12px 14px; margin-top:12px; font-size:13px; display:none; }
+.msg.error { background:rgba(248,113,113,0.1); border:1px solid rgba(248,113,113,0.2); color:var(--red); }
+.msg.success { background:rgba(74,222,128,0.1); border:1px solid rgba(74,222,128,0.2); color:var(--green); }
+.msg.show { display:block; }
+
+.trust-row { display:flex; gap:16px; flex-wrap:wrap; justify-content:center; margin-top:20px; }
+.trust-item { font-size:10px; letter-spacing:1px; text-transform:uppercase; color:var(--muted); display:flex; align-items:center; gap:4px; }
+
+/* Success screen */
+.success-screen { display:none; text-align:center; padding:48px 32px; }
+.success-screen.show { display:block; }
+.success-icon { font-size:52px; margin-bottom:20px; }
+.success-screen h3 { font-family:'Bebas Neue',sans-serif; font-size:32px; color:var(--green); margin-bottom:12px; }
+.success-screen p { font-size:14px; color:var(--muted); line-height:1.7; }
+
+/* ===== HAMBURGER ===== */
+.hamburger {
+  display:none; flex-direction:column; justify-content:center;
+  gap:5px; width:40px; height:40px; background:transparent;
+  border:1px solid var(--gold-line); cursor:pointer; padding:8px;
+  flex-shrink:0;
+}
+.hamburger span {
+  display:block; width:100%; height:2px;
+  background:var(--gold); transition:all 0.3s ease;
+  transform-origin:center;
+}
+.hamburger.open span:nth-child(1) { transform:translateY(7px) rotate(45deg); }
+.hamburger.open span:nth-child(2) { opacity:0; transform:scaleX(0); }
+.hamburger.open span:nth-child(3) { transform:translateY(-7px) rotate(-45deg); }
+
+/* Nav backdrop */
+.nav-backdrop {
+  display:none; position:fixed; inset:0; z-index:98;
+  background:rgba(0,0,0,0.6); backdrop-filter:blur(4px);
+  opacity:0; transition:opacity 0.3s;
+}
+.nav-backdrop.show { opacity:1; }
+
+.nav-mobile-cta { display:none; }
+
+/* ===== DESKTOP (1200px+) ===== */
+@media(min-width:1201px) {
+  .pricing-grid { grid-template-columns:repeat(4,1fr); }
+}
+
+/* ===== TABLET (768px – 1200px) ===== */
+@media(max-width:1200px) {
+  .pricing-grid { grid-template-columns:repeat(2,1fr); }
+  .hero h1 { font-size:clamp(52px,8vw,100px); }
+}
+
+/* ===== MOBILE NAV (≤900px) ===== */
+@media(max-width:900px) {
+  /* Hamburger */
+  .hamburger { display:flex; }
+  .nav-cta-desk { display:none; }
+  .nav-backdrop { display:block; pointer-events:none; }
+  .nav-backdrop.show { pointer-events:all; }
+
+  /* Nav drawer slides in from right */
+  .nav-links {
+    position:fixed; top:0; right:-100%; width:min(280px, 80vw);
+    height:100vh; background:var(--surface);
+    border-left:1px solid var(--gold-line);
+    flex-direction:column; gap:0; padding:80px 0 32px;
+    z-index:99; transition:right 0.35s cubic-bezier(.23,1,.32,1);
+    list-style:none; display:flex;
+  }
+  .nav-links.open { right:0; }
+  .nav-links a {
+    display:block; padding:16px 32px;
+    font-size:13px; letter-spacing:2px;
+    border-bottom:1px solid var(--border-subtle);
+    color:var(--muted);
+  }
+  .nav-links a:hover { color:var(--gold); background:var(--gold-dim); }
+  .nav-mobile-cta { display:block; margin-top:auto; }
+  .nav-mobile-cta a {
+    display:block; margin:24px 24px 0;
+    background:var(--gold); color:var(--black) !important;
+    text-align:center; font-weight:700; border:none !important;
+    padding:14px 24px !important;
+  }
+}
+
+/* ===== MOBILE (≤768px) ===== */
+@media(max-width:768px) {
+  nav { padding:14px 20px; }
+  section { padding:72px 20px; }
+  .hero { padding:110px 20px 56px; }
+  .hero h1 { font-size:clamp(48px,13vw,72px); }
+  .hero-sub { font-size:15px; }
+  .hero-ctas { flex-direction:column; gap:12px; }
+  .btn-primary, .btn-ghost { width:100%; text-align:center; padding:15px 24px; }
+  .hero-stats { gap:24px; }
+  .stat-num { font-size:32px; }
+
+  /* Problem/Solution stacked */
+  .ps-grid { grid-template-columns:1fr; }
+  .ps-col { padding:32px 20px; }
+
+  /* Services 1 col */
+  .services-grid { grid-template-columns:1fr; }
+  .service-card { padding:28px 20px; }
+
+  /* Ticker hide last 2 cols on small screens */
+  .ticker-header,
+  .ticker-row { grid-template-columns:30px 1fr 80px; }
+  .ticker-header span:last-child,
+  .ticker-row span:last-child { display:none; }
+
+  /* Pricing 1 col */
+  .pricing-grid { grid-template-columns:1fr; }
+  .price-card { padding:32px 24px; }
+  .price-badge { font-size:8px; padding:3px 12px; }
+
+  /* Proof cards stacked */
+  .proof-row { flex-direction:column; }
+  .proof-card { min-width:unset; }
+
+  /* FAQ */
+  .faq-q { font-size:14px; }
+
+  /* CTA final */
+  .cta-final { padding:72px 20px; }
+  .cta-final p { font-size:14px; }
+
+  /* Footer */
+  footer { flex-direction:column; text-align:center; padding:36px 20px; gap:20px; }
+  .footer-links { justify-content:center; gap:20px; }
+
+  /* Modal */
+  .modal { max-height:95vh; border-radius:0; }
+  .modal-body, .modal-header { padding:16px 18px; }
+  .field-row { grid-template-columns:1fr; }
+  .pkg-pills { gap:6px; }
+  .pkg-pill { font-size:10px; padding:6px 10px; }
+  .order-total { font-size:28px; }
+  .pay-btn { font-size:12px; letter-spacing:2px; }
+  .trust-row { gap:12px; }
+}
+
+/* ===== SMALL MOBILE (≤420px) ===== */
+@media(max-width:420px) {
+  .hero h1 { font-size:clamp(40px,12vw,60px); }
+  .section-title { font-size:clamp(34px,10vw,52px); }
+  .hero-badge { font-size:9px; letter-spacing:2px; }
+  .stat-num { font-size:28px; }
+  .pkg-pills { flex-direction:column; }
+  .pkg-pill { width:100%; text-align:center; }
+}
+
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- ===== MODAL CHECKOUT ===== -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModalOutside(event)">
+  <div class="modal" id="modal">
+    <div class="modal-header">
+      <h3>Secure Checkout</h3>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+
+      <div id="checkoutForm">
+        <!-- Package pills -->
+        <div class="pkg-pills">
+          <button class="pkg-pill" data-pkg="landing" data-price="30000" data-label="Landing Page" data-amount="$300" onclick="selectPkg(this)">Landing — $300</button>
+          <button class="pkg-pill" data-pkg="starter" data-price="99700" data-label="Starter" data-amount="$997" onclick="selectPkg(this)">Starter — $997</button>
+          <button class="pkg-pill active" data-pkg="growth" data-price="249700" data-label="Growth" data-amount="$2,497" onclick="selectPkg(this)">Growth — $2,497</button>
+        </div>
+
+        <!-- Order summary -->
+        <div class="order-summary">
+          <div class="order-pkg">
+            <strong id="modalPkgName">Growth</strong>
+            BA.MA DEAL Agency
+          </div>
+          <div class="order-total" id="modalAmount">$2,497</div>
+        </div>
+
+        <!-- Client info -->
+        <div class="field">
+          <label>Full Name</label>
+          <input type="text" id="clientName" placeholder="John Smith">
+        </div>
+        <div class="field">
+          <label>Email Address</label>
+          <input type="email" id="clientEmail" placeholder="john@example.com">
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Business Name</label>
+            <input type="text" id="clientBiz" placeholder="My Business">
+          </div>
+          <div class="field">
+            <label>Phone (optional)</label>
+            <input type="tel" id="clientPhone" placeholder="+1 (407)...">
+          </div>
+        </div>
+
+        <!-- Card fields -->
+        <div class="field">
+          <label>Card Number</label>
+          <div class="stripe-el" id="cardNumber"></div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Expiry</label>
+            <div class="stripe-el" id="cardExpiry"></div>
+          </div>
+          <div class="field">
+            <label>CVC</label>
+            <div class="stripe-el" id="cardCvc"></div>
+          </div>
+        </div>
+
+        <button class="pay-btn" id="payBtn" onclick="handlePayment()">
+          <div class="spinner"></div>
+          <span class="btn-txt">🔒 Pay Now — <span id="btnAmount">$2,497</span></span>
+        </button>
+
+        <div class="msg error" id="errorMsg"></div>
+
+        <div class="trust-row">
+          <span class="trust-item">🔒 SSL Encrypted</span>
+          <span class="trust-item">💳 Debit & Credit</span>
+          <span class="trust-item">⚡ Stripe Secured</span>
+        </div>
+      </div>
+
+      <!-- Success screen -->
+      <div class="success-screen" id="successScreen">
+        <div class="success-icon">✅</div>
+        <h3>Payment Confirmed!</h3>
+        <p>Thank you! Your payment was processed successfully.<br><br>
+        Erwens will reach out within <strong>24 hours</strong> to kick off your project.<br><br>
+        Check your email for a receipt.</p>
+      </div>
+
+    </div>
+  </div>
+</div>
+<!-- ===== END MODAL ===== -->
+
+<nav id="navbar">
+  <a href="#" class="nav-logo">BA.MA <span>DEAL</span></a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#services" onclick="closeNav()">Services</a></li>
+    <li><a href="#results" onclick="closeNav()">Results</a></li>
+    <li><a href="#pricing" onclick="closeNav()">Pricing</a></li>
+    <li><a href="#faq" onclick="closeNav()">FAQ</a></li>
+    <li class="nav-mobile-cta"><a href="https://calendly.com/maxwens10" target="_blank">Book a Call →</a></li>
+  </ul>
+  <div style="display:flex;align-items:center;gap:12px;">
+    <a href="https://calendly.com/maxwens10" target="_blank" class="nav-cta nav-cta-desk">Book a Call</a>
+    <button class="hamburger" id="hamburger" onclick="toggleNav()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+<div class="nav-backdrop" id="navBackdrop" onclick="closeNav()"></div>
+
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-badge"><span></span> Now Accepting New Clients — Orlando / Apopka, FL</div>
+  <h1>THE DIGITAL<br>GROWTH <span class="outline">OS</span><br>FOR YOUR BRAND</h1>
+  <p class="hero-sub">We replaced expensive agencies and slow freelancers with a streamlined AI-powered system. What used to take months now takes days. You get websites, content, and strategy that actually convert.</p>
+  <div class="hero-ctas">
+    <a href="https://calendly.com/maxwens10" target="_blank" class="btn-primary">Book a Free Call</a>
+    <a href="#services" class="btn-ghost">See What We Do</a>
+  </div>
+  <div class="hero-stats">
+    <div><div class="stat-num">48H</div><div class="stat-label">Avg Delivery Time</div></div>
+    <div><div class="stat-num">100%</div><div class="stat-label">Conversion-Focused</div></div>
+    <div><div class="stat-num">3X</div><div class="stat-label">Avg Engagement Lift</div></div>
+    <div><div class="stat-num">FL+</div><div class="stat-label">Serving Florida & Beyond</div></div>
+  </div>
+</section>
+
+<div class="marquee-wrap">
+  <div class="marquee-track">
+    <span class="marquee-item">Web Design <span>✦</span></span><span class="marquee-item">Shopify Stores <span>✦</span></span><span class="marquee-item">Framer Sites <span>✦</span></span><span class="marquee-item">Brand Identity <span>✦</span></span><span class="marquee-item">Content Creation <span>✦</span></span><span class="marquee-item">AI Integration <span>✦</span></span><span class="marquee-item">Social Media <span>✦</span></span><span class="marquee-item">Digital Strategy <span>✦</span></span><span class="marquee-item">Web Design <span>✦</span></span><span class="marquee-item">Shopify Stores <span>✦</span></span><span class="marquee-item">Framer Sites <span>✦</span></span><span class="marquee-item">Brand Identity <span>✦</span></span><span class="marquee-item">Content Creation <span>✦</span></span><span class="marquee-item">AI Integration <span>✦</span></span><span class="marquee-item">Social Media <span>✦</span></span><span class="marquee-item">Digital Strategy <span>✦</span></span>
+  </div>
+</div>
+
+<section class="problem-solution reveal" id="problem">
+  <span class="section-label">The Reality</span>
+  <h2 class="section-title">STOP LOSING<br>CLIENTS ONLINE</h2>
+  <div class="ps-grid">
+    <div class="ps-col problem">
+      <span class="ps-col-label">The Problem</span>
+      <div class="ps-item"><div class="ps-icon">✕</div><p>Generic websites that look like everyone else — no differentiation, no conversions.</p></div>
+      <div class="ps-item"><div class="ps-icon">✕</div><p>Slow agencies charging $5K–$15K and delivering 3 months later.</p></div>
+      <div class="ps-item"><div class="ps-icon">✕</div><p>No content strategy — posting without direction, getting zero results.</p></div>
+      <div class="ps-item"><div class="ps-icon">✕</div><p>Paying for tools you don't need instead of a system built for your business.</p></div>
+    </div>
+    <div class="ps-col solution">
+      <span class="ps-col-label">The BA.MA DEAL System</span>
+      <div class="ps-item"><div class="ps-icon">✓</div><p>Custom, high-converting sites built with Framer, Webflow, or Shopify in 48–72 hours.</p></div>
+      <div class="ps-item"><div class="ps-icon">✓</div><p>Streamlined AI-powered workflow — premium quality at a fraction of the cost.</p></div>
+      <div class="ps-item"><div class="ps-icon">✓</div><p>Content strategy + creation tailored to your audience and platform.</p></div>
+      <div class="ps-item"><div class="ps-icon">✓</div><p>One agency, full digital stack — design, content, strategy, and AI tools.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="services" class="reveal">
+  <span class="section-label">What We Build</span>
+  <h2 class="section-title">YOUR FULL<br>DIGITAL STACK</h2>
+  <div class="services-grid">
+    <div class="service-card"><div class="service-number">01</div><span class="service-icon">⚡</span><div class="service-name">Conversion Web Design</div><p class="service-desc">Framer, Webflow & Shopify sites engineered to convert visitors into paying clients. No templates — fully custom, fully yours.</p><span class="service-tag">Framer · Webflow · Shopify</span></div>
+    <div class="service-card"><div class="service-number">02</div><span class="service-icon">🛒</span><div class="service-name">E-Commerce Stores</div><p class="service-desc">Full Shopify builds with product listings, payment setup, and optimized UX. Ready to sell from day one.</p><span class="service-tag">Shopify · E-Commerce</span></div>
+    <div class="service-card"><div class="service-number">03</div><span class="service-icon">🎬</span><div class="service-name">Content Creation</div><p class="service-desc">Photo, video, and graphic content built for your brand voice. Engineered for engagement across every platform.</p><span class="service-tag">Instagram · TikTok · LinkedIn</span></div>
+    <div class="service-card"><div class="service-number">04</div><span class="service-icon">🤖</span><div class="service-name">AI Integration</div><p class="service-desc">We embed AI tools into your workflow — chatbots, automation, and content pipelines that save you time and money.</p><span class="service-tag">Claude · ChatGPT · Automation</span></div>
+    <div class="service-card"><div class="service-number">05</div><span class="service-icon">🎯</span><div class="service-name">Brand Strategy</div><p class="service-desc">Positioning, messaging, and visual identity that makes you the obvious choice in your market.</p><span class="service-tag">Identity · Positioning · Copy</span></div>
+    <div class="service-card"><div class="service-number">06</div><span class="service-icon">📈</span><div class="service-name">Digital Growth</div><p class="service-desc">From SEO to social strategy — we build systems that keep bringing you leads on autopilot, long after launch.</p><span class="service-tag">SEO · Social · Ads</span></div>
+  </div>
+</section>
+
+<section class="intel-section reveal" id="results">
+  <span class="section-label">Market Intelligence</span>
+  <h2 class="section-title">TRENDING<br>INDUSTRIES</h2>
+  <p style="color:var(--muted);font-size:14px;margin-top:16px;">The niches we're watching — and building for — right now in Florida.</p>
+  <div class="ticker-wrap">
+    <div class="ticker-header"><span>#</span><span>Industry</span><span>Demand Trend</span><span>Growth</span></div>
+    <div class="ticker-row"><span class="ticker-num">01</span><span class="ticker-niche">Wellness & Fitness Coaches</span><span class="ticker-trend up">▲ Rising</span><span class="ticker-change pos">+32%</span></div>
+    <div class="ticker-row"><span class="ticker-num">02</span><span class="ticker-niche">Real Estate Agents</span><span class="ticker-trend up">▲ Rising</span><span class="ticker-change pos">+24%</span></div>
+    <div class="ticker-row"><span class="ticker-num">03</span><span class="ticker-niche">Food & Restaurant Brands</span><span class="ticker-trend up">▲ Rising</span><span class="ticker-change pos">+19%</span></div>
+    <div class="ticker-row"><span class="ticker-num">04</span><span class="ticker-niche">E-Commerce / Skincare</span><span class="ticker-trend up">▲ Rising</span><span class="ticker-change pos">+28%</span></div>
+    <div class="ticker-row"><span class="ticker-num">05</span><span class="ticker-niche">Local Service Businesses</span><span class="ticker-trend flat">▶ Stable</span><span class="ticker-change pos">+8%</span></div>
+    <div class="ticker-row"><span class="ticker-num">06</span><span class="ticker-niche">Beauty & Manicure Salons</span><span class="ticker-trend up">▲ Rising</span><span class="ticker-change pos">+21%</span></div>
+  </div>
+</section>
+
+<section class="reveal">
+  <span class="section-label">Client Results</span>
+  <h2 class="section-title">REAL BRANDS,<br>REAL RESULTS</h2>
+  <div class="proof-row">
+    <div class="proof-card"><p class="proof-quote">"BA.MA DEAL transformed our online presence completely. The site went live in 3 days and we started getting DMs from new customers immediately."</p><div class="proof-author">Mochinut Apopka</div><div class="proof-role">Food & Dessert Brand · Apopka, FL</div></div>
+    <div class="proof-card"><p class="proof-quote">"Professional, fast, and they actually understood our market. Our Shopify store is now generating consistent revenue every week."</p><div class="proof-author">CareHers</div><div class="proof-role">E-Commerce · Wellness Brand</div></div>
+    <div class="proof-card"><p class="proof-quote">"Finally a digital agency that speaks our language — literally and figuratively. The content they create performs way above industry average."</p><div class="proof-author">Local Business Client</div><div class="proof-role">Service Business · Orlando, FL</div></div>
+  </div>
+</section>
+
+<section id="pricing" class="reveal" style="background:var(--surface);">
+  <span class="section-label">Investment</span>
+  <h2 class="section-title">PICK YOUR<br>LEVEL</h2>
+  <p style="color:var(--muted);font-size:14px;margin-top:16px;">No hidden fees. No long contracts. Just results.</p>
+  <div class="pricing-grid">
+
+    <div class="price-card">
+      <div class="price-tier">Landing Page</div>
+      <div class="price-amount"><sup>$</sup>300</div>
+      <p class="price-desc">Perfect entry point. One high-converting page to get you online fast.</p>
+      <ul class="price-features">
+        <li>1 Custom Landing Page</li>
+        <li>Mobile Optimized</li>
+        <li>Contact Form Setup</li>
+        <li>48-Hour Delivery</li>
+        <li>1 Revision Round</li>
+      </ul>
+      <button class="price-cta" onclick="openModal('landing','$300','Landing Page','30000')">Get Started — $300</button>
+    </div>
+
+    <div class="price-card">
+      <div class="price-tier">Starter</div>
+      <div class="price-amount"><sup>$</sup>997</div>
+      <p class="price-desc">For local businesses ready to establish a professional online presence.</p>
+      <ul class="price-features">
+        <li>1-Page Website (Framer or Webflow)</li>
+        <li>Mobile Optimized</li>
+        <li>Basic SEO Setup</li>
+        <li>Calendly / Contact Integration</li>
+        <li>48-Hour Delivery</li>
+      </ul>
+      <button class="price-cta" onclick="openModal('starter','$997','Starter','99700')">Get Started — $997</button>
+    </div>
+
+    <div class="price-card featured">
+      <div class="price-badge">Most Popular</div>
+      <div class="price-tier">Growth</div>
+      <div class="price-amount"><sup>$</sup>2,497</div>
+      <p class="price-desc">Full digital system for coaches, consultants, and growing brands.</p>
+      <ul class="price-features">
+        <li>Multi-Page Website</li>
+        <li>Brand Identity Package</li>
+        <li>Content Strategy (30 Days)</li>
+        <li>Social Media Setup</li>
+        <li>AI Tool Integration</li>
+        <li>1-Month Support Included</li>
+      </ul>
+      <button class="price-cta" onclick="openModal('growth','$2,497','Growth','249700')">Get Started — $2,497</button>
+    </div>
+
+    <div class="price-card">
+      <div class="price-tier">Agency</div>
+      <div class="price-amount" style="font-size:36px;padding-top:6px;">Let's Talk</div>
+      <p class="price-desc">Custom scope for established businesses needing full-stack digital execution.</p>
+      <ul class="price-features">
+        <li>Everything in Growth</li>
+        <li>Shopify / E-Commerce Build</li>
+        <li>Ongoing Content Creation</li>
+        <li>Paid Ads Management</li>
+        <li>Monthly Strategy Calls</li>
+        <li>Priority Support</li>
+      </ul>
+      <a href="https://calendly.com/maxwens10" target="_blank" class="price-cta">Book a Strategy Call</a>
+    </div>
+
+  </div>
+</section>
+
+<section id="faq" class="reveal">
+  <span class="section-label">Questions</span>
+  <h2 class="section-title">GOT<br>QUESTIONS?</h2>
+  <div class="faq-list">
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">How fast can I get my website? <span class="toggle">+</span></div><div class="faq-a">Landing Page and Starter sites are delivered in 48 hours. Growth packages typically take 5–7 business days. We'll set a clear timeline before we start.</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Do I need to provide my own content? <span class="toggle">+</span></div><div class="faq-a">Not necessarily. Our Growth and Agency packages include content creation. For Landing Page and Starter, we can work with what you have or help source what's needed.</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">What platforms do you build on? <span class="toggle">+</span></div><div class="faq-a">We specialize in Framer, Webflow, and Shopify. We recommend the right platform based on your goals — Framer for agency/portfolio sites, Webflow for complex builds, Shopify for e-commerce.</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Do you work with non-English speaking clients? <span class="toggle">+</span></div><div class="faq-a">Yes — we're fully bilingual (English & Haitian Creole) and serve the Haitian community in Florida and beyond. We understand your market and communicate in your language.</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">How do I pay? <span class="toggle">+</span></div><div class="faq-a">We accept all major debit and credit cards via Stripe — fully encrypted and secure. Click any "Get Started" button and a secure checkout will open directly on this page.</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Can I white-label your services? <span class="toggle">+</span></div><div class="faq-a">Yes. We offer white-label partnerships for agencies and consultants who want to resell our services under their brand. Book a call to discuss a custom arrangement.</div></div>
+  </div>
+</section>
+
+<div class="cta-final reveal">
+  <h2>READY TO<br><span class="outline">GROW?</span></h2>
+  <p>Book a free 30-minute strategy call. We'll audit your current digital presence and show you exactly what's holding you back.</p>
+  <a href="https://calendly.com/maxwens10" target="_blank" class="btn-primary">Book Your Free Call</a>
+</div>
+
+<footer>
+  <div class="footer-logo">BA.MA <span>DEAL</span></div>
+  <div class="footer-links">
+    <a href="#services">Services</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#faq">FAQ</a>
+    <a href="mailto:maxwens10@icloud.com">maxwens10@icloud.com</a>
+  </div>
+  <div class="footer-copy">© 2026 BA.MA DEAL. Orlando / Apopka, FL.</div>
+</footer>
+
+<script>
+// ===== AUTO THEME — system preference only =====
+// Apply BEFORE page renders to avoid flash
+(function() {
+  const dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+})();
+
+document.addEventListener('DOMContentLoaded', () => {
+
+// Stripe key — remplace ak vrè key ou a
+const STRIPE_KEY = 'pk_live_51SnWLRPcDUVEkhCYUDLt2s7LId5E4RzHoZAWeF0euFKi0OQ0n1eM356Klcm2sFUqv8AcQJpGlLzpB7GiuZSGFMEb00au6ON8oP';
+const stripe = Stripe(STRIPE_KEY);
+
+function getStripeTheme() {
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  return {
+    theme: isDark ? 'night' : 'stripe',
+    variables: {
+      colorPrimary: isDark ? '#C9A84C' : '#A8762A',
+      colorBackground: isDark ? '#161616' : '#E2DCCE',
+      colorText: isDark ? '#F0EDE8' : '#0F0A04',
+      colorDanger: '#f87171',
+      fontFamily: 'DM Sans, sans-serif',
+      borderRadius: '0px'
+    }
+  };
+}
+
+const elements = stripe.elements({ appearance: getStripeTheme() });
+const cardNumber = elements.create('cardNumber', { style:{ base:{ fontSize:'14px', '::placeholder':{ color:'#888' } } } });
+const cardExpiry = elements.create('cardExpiry', { style:{ base:{ fontSize:'14px', '::placeholder':{ color:'#888' } } } });
+const cardCvc    = elements.create('cardCvc',    { style:{ base:{ fontSize:'14px', '::placeholder':{ color:'#888' } } } });
+
+let stripeReady = false;
+function mountStripe() {
+  if (stripeReady) return;
+  cardNumber.mount('#cardNumber');
+  cardExpiry.mount('#cardExpiry');
+  cardCvc.mount('#cardCvc');
+  cardNumber.on('focus', () => document.getElementById('cardNumber').classList.add('focused'));
+  cardNumber.on('blur',  () => document.getElementById('cardNumber').classList.remove('focused'));
+  cardExpiry.on('focus', () => document.getElementById('cardExpiry').classList.add('focused'));
+  cardExpiry.on('blur',  () => document.getElementById('cardExpiry').classList.remove('focused'));
+  cardCvc.on('focus',    () => document.getElementById('cardCvc').classList.add('focused'));
+  cardCvc.on('blur',     () => document.getElementById('cardCvc').classList.remove('focused'));
+  stripeReady = true;
+}
+
+// Selected package
+let selPkg = { pkg:'growth', amount:'$2,497', label:'Growth', price:249700 };
+
+// Modal open/close
+function openModal(pkg, amount, label, price) {
+  selPkg = { pkg, amount, label, price:parseInt(price) };
+  document.getElementById('modalPkgName').textContent = label;
+  document.getElementById('modalAmount').textContent = amount;
+  document.getElementById('btnAmount').textContent = amount;
+  document.querySelectorAll('.pkg-pill').forEach(p => {
+    p.classList.toggle('active', p.dataset.pkg === pkg);
+  });
+  const badge = document.querySelector('.price-badge');
+  if (badge) badge.style.display = pkg === 'growth' ? '' : 'none';
+  updateSummaryStyle(pkg);
+  document.getElementById('modalOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  setTimeout(mountStripe, 100);
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+  const badge = document.querySelector('.price-badge');
+  if (badge) badge.style.display = '';
+}
+
+function closeModalOutside(e) {
+  if (e.target === document.getElementById('modalOverlay')) closeModal();
+}
+// Expose globally for onclick attributes
+window.openModal = openModal;
+window.closeModal = closeModal;
+window.closeModalOutside = closeModalOutside;
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+function updateSummaryStyle(pkg) {
+  const summary = document.querySelector('.order-summary');
+  const total = document.getElementById('modalAmount');
+  if (pkg === 'growth') {
+    summary.style.background = '';
+    summary.style.borderColor = '';
+    total.style.color = '';
+  } else {
+    summary.style.background = 'transparent';
+    summary.style.borderColor = 'var(--border-subtle)';
+    total.style.color = 'var(--white)';
+  }
+}
+
+// Package pill switch
+function selectPkg(el) {
+  selPkg = { pkg: el.dataset.pkg, amount: el.dataset.amount, label: el.dataset.label, price: parseInt(el.dataset.price) };
+  document.querySelectorAll('.pkg-pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('modalPkgName').textContent = selPkg.label;
+  document.getElementById('modalAmount').textContent = selPkg.amount;
+  document.getElementById('btnAmount').textContent = selPkg.amount;
+  const badge = document.querySelector('.price-badge');
+  if (badge) badge.style.display = selPkg.pkg === 'growth' ? '' : 'none';
+  updateSummaryStyle(selPkg.pkg);
+}
+window.selectPkg = selectPkg;
+
+// Payment
+async function handlePayment() {
+  const name  = document.getElementById('clientName').value.trim();
+  const email = document.getElementById('clientEmail').value.trim();
+  const errEl = document.getElementById('errorMsg');
+  const btn   = document.getElementById('payBtn');
+  errEl.classList.remove('show');
+
+  if (!name || !email) { showErr('Please enter your full name and email.'); return; }
+  if (!email.includes('@')) { showErr('Please enter a valid email address.'); return; }
+
+  btn.classList.add('loading'); btn.disabled = true;
+
+  try {
+    // Step 1 — Create PaymentMethod
+    const { paymentMethod, error: pmError } = await stripe.createPaymentMethod({
+      type: 'card', card: cardNumber,
+      billing_details: { name, email }
+    });
+    if (pmError) { showErr(pmError.message); btn.classList.remove('loading'); btn.disabled = false; return; }
+
+    // Step 2 — Call Netlify Function to create PaymentIntent
+    const res = await fetch('/.netlify/functions/create-payment-intent', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        amount: selPkg.price,
+        currency: 'usd',
+        pkg: selPkg.label,
+        name, email
+      })
+    });
+
+    const { clientSecret, error: fnError } = await res.json();
+    if (fnError) { showErr(fnError); btn.classList.remove('loading'); btn.disabled = false; return; }
+
+    // Step 3 — Confirm payment
+    const { error: confirmError } = await stripe.confirmCardPayment(clientSecret, {
+      payment_method: paymentMethod.id
+    });
+
+    if (confirmError) {
+      showErr(confirmError.message);
+      btn.classList.remove('loading'); btn.disabled = false;
+      return;
+    }
+
+    // Step 4 — Success!
+    document.getElementById('checkoutForm').style.display = 'none';
+    document.getElementById('successScreen').classList.add('show');
+
+  } catch(err) {
+    showErr('Unexpected error. Please try again.');
+    btn.classList.remove('loading'); btn.disabled = false;
+  }
+}
+window.handlePayment = handlePayment;
+
+function showErr(msg) {
+  const el = document.getElementById('errorMsg');
+  el.textContent = msg; el.classList.add('show');
+}
+
+// Cursor — only on non-touch devices
+const cursor = document.getElementById('cursor');
+const ring   = document.getElementById('cursorRing');
+if (window.matchMedia('(pointer: fine)').matches) {
+  let mx=0, my=0, rx=0, ry=0;
+  document.addEventListener('mousemove', e => {
+    mx=e.clientX; my=e.clientY;
+    cursor.style.left=mx+'px'; cursor.style.top=my+'px';
+  });
+  (function animateRing() {
+    rx+=(mx-rx)*0.12; ry+=(my-ry)*0.12;
+    ring.style.left=rx+'px'; ring.style.top=ry+'px';
+    requestAnimationFrame(animateRing);
+  })();
+  document.querySelectorAll('a,button,.faq-q,.service-card').forEach(el => {
+    el.addEventListener('mouseenter', () => { cursor.style.transform='translate(-50%,-50%) scale(2.5)'; cursor.style.opacity='0.5'; });
+    el.addEventListener('mouseleave', () => { cursor.style.transform='translate(-50%,-50%) scale(1)'; cursor.style.opacity='1'; });
+  });
+}
+
+// Scroll reveal
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('visible'); obs.unobserve(e.target); } });
+}, { threshold:0.08 });
+document.querySelectorAll('.reveal').forEach(r => obs.observe(r));
+
+// FAQ
+function toggleFaq(el) {
+  const item = el.parentElement;
+  const open = item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+  if (!open) item.classList.add('open');
+}
+window.toggleFaq = toggleFaq;
+
+// Nav scroll — respects current theme
+window.addEventListener('scroll', () => {
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  document.getElementById('navbar').style.borderBottomColor =
+    window.scrollY > 60
+      ? (isDark ? 'rgba(201,168,76,0.25)' : 'rgba(168,118,42,0.3)')
+      : (isDark ? 'rgba(201,168,76,0.1)'  : 'rgba(168,118,42,0.15)');
+});
+
+// ===== HAMBURGER MENU =====
+function toggleNav() {
+  const nav = document.getElementById('navLinks');
+  const btn = document.getElementById('hamburger');
+  const backdrop = document.getElementById('navBackdrop');
+  const isOpen = nav.classList.contains('open');
+  nav.classList.toggle('open', !isOpen);
+  btn.classList.toggle('open', !isOpen);
+  backdrop.classList.toggle('show', !isOpen);
+  document.body.style.overflow = isOpen ? '' : 'hidden';
+}
+
+function closeNav() {
+  const nav = document.getElementById('navLinks');
+  const btn = document.getElementById('hamburger');
+  const backdrop = document.getElementById('navBackdrop');
+  nav.classList.remove('open');
+  btn.classList.remove('open');
+  backdrop.classList.remove('show');
+  document.body.style.overflow = '';
+}
+window.toggleNav = toggleNav;
+window.closeNav = closeNav;
+
+// Close nav on resize to desktop
+window.addEventListener('resize', () => {
+  if (window.innerWidth > 900) closeNav();
+});
+
+// Theme live update
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+  document.documentElement.setAttribute('data-theme', e.matches ? 'dark' : 'light');
+});
+
+}); // end DOMContentLoaded
+</script>
+
+<!-- ===== FIREBASE REAL-TIME SYNC ===== -->
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getFirestore, doc, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDkGmPPJVWyE8pYQyvfUPcUYde0zC3dMAQ",
+  authDomain: "bamadeal-a9532.firebaseapp.com",
+  projectId: "bamadeal-a9532",
+  storageBucket: "bamadeal-a9532.firebasestorage.app",
+  messagingSenderId: "1013946586498",
+  appId: "1:1013946586498:web:9192a0075dcd3f3ae46b9b"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// ---- PRICING real-time listener ----
+onSnapshot(doc(db, 'site', 'pricing'), snap => {
+  if (!snap.exists()) return;
+  const d = snap.data();
+
+  // Update price amounts on page
+  const cards = document.querySelectorAll('.price-card');
+
+  // Landing Page (card 0)
+  if (d.landing) {
+    const c = cards[0];
+    if (c) {
+      const amt = c.querySelector('.price-amount');
+      const tier = c.querySelector('.price-tier');
+      const desc = c.querySelector('.price-desc');
+      const cta = c.querySelector('.price-cta');
+      if (amt) amt.innerHTML = `<sup>$</sup>${d.landing.price}`;
+      if (tier) tier.textContent = d.landing.name || 'Landing Page';
+      if (desc) desc.textContent = d.landing.desc || '';
+      if (cta) {
+        cta.textContent = `Get Started — $${d.landing.price}`;
+        cta.setAttribute('onclick', `openModal('landing','$${d.landing.price}','${d.landing.name}','${d.landing.price * 100}')`);
+      }
+      const feats = c.querySelector('.price-features');
+      if (feats && d.landing.features) {
+        feats.innerHTML = d.landing.features.map(f => `<li>${f}</li>`).join('');
+      }
+    }
+  }
+
+  // Starter (card 1)
+  if (d.starter) {
+    const c = cards[1];
+    if (c) {
+      const amt = c.querySelector('.price-amount');
+      const tier = c.querySelector('.price-tier');
+      const desc = c.querySelector('.price-desc');
+      const cta = c.querySelector('.price-cta');
+      if (amt) amt.innerHTML = `<sup>$</sup>${d.starter.price}`;
+      if (tier) tier.textContent = d.starter.name || 'Starter';
+      if (desc) desc.textContent = d.starter.desc || '';
+      if (cta) {
+        cta.textContent = `Get Started — $${d.starter.price}`;
+        cta.setAttribute('onclick', `openModal('starter','$${d.starter.price}','${d.starter.name}','${d.starter.price * 100}')`);
+      }
+      const feats = c.querySelector('.price-features');
+      if (feats && d.starter.features) {
+        feats.innerHTML = d.starter.features.map(f => `<li>${f}</li>`).join('');
+      }
+    }
+  }
+
+  // Growth (card 2)
+  if (d.growth) {
+    const c = cards[2];
+    if (c) {
+      const amt = c.querySelector('.price-amount');
+      const tier = c.querySelector('.price-tier');
+      const desc = c.querySelector('.price-desc');
+      const cta = c.querySelector('.price-cta');
+      if (amt) amt.innerHTML = `<sup>$</sup>${Number(d.growth.price).toLocaleString()}`;
+      if (tier) tier.textContent = d.growth.name || 'Growth';
+      if (desc) desc.textContent = d.growth.desc || '';
+      if (cta) {
+        cta.textContent = `Get Started — $${Number(d.growth.price).toLocaleString()}`;
+        cta.setAttribute('onclick', `openModal('growth','$${Number(d.growth.price).toLocaleString()}','${d.growth.name}','${d.growth.price * 100}')`);
+      }
+      const feats = c.querySelector('.price-features');
+      if (feats && d.growth.features) {
+        feats.innerHTML = d.growth.features.map(f => `<li>${f}</li>`).join('');
+      }
+    }
+  }
+});
+
+// ---- SETTINGS real-time listener ----
+onSnapshot(doc(db, 'site', 'settings'), snap => {
+  if (!snap.exists()) return;
+  const d = snap.data();
+
+  // Hero badge
+  if (d.badge) {
+    const badge = document.querySelector('.hero-badge');
+    if (badge) badge.innerHTML = `<span></span> ${d.badge}`;
+  }
+
+  // Hero title
+  if (d.h1) {
+    const h1 = document.querySelector('.hero h1');
+    if (h1) {
+      const h2text = (d.h2 || 'GROWTH OS').replace(/\s*OS\s*$/i, '').trim();
+      h1.innerHTML = `${d.h1}<br>${h2text} <span class="outline">OS</span><br>${d.h3 || 'FOR YOUR BRAND'}`;
+    }
+  }
+
+  // Hero subtitle
+  if (d.hsub) {
+    const sub = document.querySelector('.hero-sub');
+    if (sub) sub.textContent = d.hsub;
+  }
+
+  // Calendly links
+  if (d.calendly) {
+    document.querySelectorAll('a[href*="calendly"]').forEach(a => {
+      a.href = d.calendly;
+    });
+  }
+});
+
+// ---- TESTIMONIALS real-time listener ----
+onSnapshot(doc(db, 'site', 'testimonials'), snap => {
+  if (!snap.exists()) return;
+  const d = snap.data();
+  if (!d.items || !d.items.length) return;
+  const row = document.querySelector('.proof-row');
+  if (!row) return;
+  row.innerHTML = d.items.map(t => `
+    <div class="proof-card">
+      <p class="proof-quote">"${t.quote}"</p>
+      <div class="proof-author">${t.name}</div>
+      <div class="proof-role">${t.role}</div>
+    </div>
+  `).join('');
+});
+
+// ---- FAQ real-time listener ----
+onSnapshot(doc(db, 'site', 'faq'), snap => {
+  if (!snap.exists()) return;
+  const d = snap.data();
+  if (!d.items || !d.items.length) return;
+  const list = document.querySelector('.faq-list');
+  if (!list) return;
+  list.innerHTML = d.items.map(f => `
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">${f.q} <span class="toggle">+</span></div>
+      <div class="faq-a">${f.a}</div>
+    </div>
+  `).join('');
+});
+
+console.log('🔥 Firebase connected — BA.MA DEAL live sync active');
+</script>
