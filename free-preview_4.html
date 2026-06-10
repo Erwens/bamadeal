@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Get a free website preview from BA.MA DEAL. No cost, no commitment. We build it — you decide.">
+<meta name="color-scheme" content="dark light">
+<title>Free Site Preview — BA.MA DEAL</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0A0A0A;
+    --card: #111111;
+    --border: #1E1E1E;
+    --gold: #D4A843;
+    --gold2: #F0C060;
+    --white: #FFFFFF;
+    --text: #FFFFFF;
+    --muted: #555555;
+    --input-bg: #161616;
+    --nav-bg: rgba(10,10,10,0.95);
+    --ghost: #161616;
+    --fd: 'Bebas Neue', sans-serif;
+    --fb: 'DM Sans', sans-serif;
+  }
+
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #F5F4F0;
+      --card: #FFFFFF;
+      --border: #E0DDD6;
+      --white: #111111;
+      --text: #111111;
+      --muted: #999999;
+      --input-bg: #F9F8F5;
+      --nav-bg: rgba(245,244,240,0.95);
+      --ghost: #EFEFEF;
+    }
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; cursor: none !important; }
+  html { scroll-behavior: smooth; }
+  ::-webkit-scrollbar { width: 5px; background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: #2A2A2A; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--gold); }
+
+  /* ── CUSTOM CURSOR ── */
+  #cursor-dot {
+    position: fixed;
+    width: 8px; height: 8px;
+    background: var(--gold);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: width 0.2s, height 0.2s, background 0.2s;
+  }
+  #cursor-ring {
+    position: fixed;
+    width: 36px; height: 36px;
+    border: 1px solid var(--gold);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    opacity: 0.5;
+    transition: width 0.35s ease, height 0.35s ease, opacity 0.35s ease, transform 0.1s ease;
+  }
+  body.hovering #cursor-dot { width: 12px; height: 12px; background: var(--gold2); }
+  body.hovering #cursor-ring { width: 50px; height: 50px; opacity: 0.3; }
+  body.clicking #cursor-dot { width: 5px; height: 5px; }
+  body.clicking #cursor-ring { width: 22px; height: 22px; opacity: 0.8; }
+
+  /* ── BACKGROUND PATTERN ── */
+  body {
+    background: var(--bg);
+    min-height: 100vh;
+    font-family: var(--fb);
+    color: var(--text);
+    position: relative;
+  }
+
+  /* Dot grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: radial-gradient(circle, #2A2A2A 1px, transparent 1px);
+    background-size: 32px 32px;
+    opacity: 0.35;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Gold corner geometric accents */
+  body::after {
+    content: '';
+    position: fixed;
+    top: 0; right: 0;
+    width: 300px; height: 300px;
+    background: radial-gradient(ellipse at top right, rgba(212,168,67,0.06) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .bg-accent-bl {
+    position: fixed;
+    bottom: 0; left: 0;
+    width: 250px; height: 250px;
+    background: radial-gradient(ellipse at bottom left, rgba(212,168,67,0.04) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Diagonal line accent */
+  .bg-lines {
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(135deg, transparent 49.5%, rgba(212,168,67,0.03) 49.5%, rgba(212,168,67,0.03) 50.5%, transparent 50.5%);
+    background-size: 80px 80px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* All content above bg */
+  nav, .hero, .how, .form-wrap, footer { position: relative; z-index: 1; }
+
+  /* ── NAV ── */
+  nav {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 22px 48px;
+    border-bottom: 1px solid var(--border);
+    position: sticky; top: 0;
+    background: var(--nav-bg);
+    backdrop-filter: blur(14px);
+    z-index: 100;
+  }
+  .nav-logo {
+    font-family: var(--fd);
+    font-size: 28px;
+    letter-spacing: 6px;
+    color: var(--text);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-logo em { color: var(--gold); font-style: normal; }
+  .nav-logo:hover { color: var(--gold); }
+  .nav-back {
+    font-size: 11px; letter-spacing: 3px; color: var(--muted);
+    text-decoration: none; text-transform: uppercase; transition: color 0.2s;
+  }
+  .nav-back:hover { color: var(--gold); }
+
+  /* ── HERO ── */
+  .hero { text-align: center; padding: 90px 24px 64px; max-width: 640px; margin: 0 auto; }
+  .hero .badge { display: inline-block; border: 1px solid var(--gold); color: var(--gold); font-size: 9px; letter-spacing: 5px; text-transform: uppercase; padding: 6px 18px; margin-bottom: 26px; }
+  .hero h1 { font-family: var(--fd); font-size: clamp(52px, 11vw, 88px); line-height: 0.9; color: var(--text); letter-spacing: 1px; margin-bottom: 22px; }
+  .hero h1 em { color: var(--gold); font-style: normal; }
+  .hero p { font-size: 15px; color: var(--muted); line-height: 1.8; max-width: 380px; margin: 0 auto; }
+
+  /* ── HOW ── */
+  .how { display: flex; justify-content: center; max-width: 600px; margin: 0 auto 64px; padding: 0 24px; }
+  .how-step { flex: 1; text-align: center; padding: 24px 16px; border-top: 1px solid var(--border); position: relative; }
+  .how-step:not(:last-child)::after { content: ''; position: absolute; right: 0; top: 50%; width: 1px; height: 40%; background: var(--border); transform: translateY(-50%); }
+  .how-num { font-family: var(--fd); font-size: 32px; color: var(--gold); opacity: 0.5; line-height: 1; margin-bottom: 6px; }
+  .how-txt { font-size: 11px; letter-spacing: 1.5px; color: var(--muted); text-transform: uppercase; line-height: 1.6; }
+
+  /* ── FORM WRAP ── */
+  .form-wrap { display: flex; justify-content: center; padding: 0 16px 80px; }
+
+  /* ── CARD ── */
+  .card { background: var(--card); border: 1px solid var(--border); width: 100%; max-width: 480px; position: relative; overflow: hidden; }
+  .progress-track { height: 2px; background: var(--border); }
+  .progress-fill { height: 2px; background: linear-gradient(90deg, var(--gold), var(--gold2)); transition: width 0.4s ease; }
+  .ghost-num { position: absolute; top: -20px; right: -8px; font-family: var(--fd); font-size: 200px; color: var(--ghost); line-height: 1; pointer-events: none; transition: opacity 0.3s; user-select: none; }
+  .corner { position: absolute; width: 18px; height: 18px; }
+  .corner.tl { top: 14px; left: 14px; border-top: 1px solid var(--border); border-left: 1px solid var(--border); }
+  .corner.br { bottom: 14px; right: 14px; border-bottom: 1px solid var(--border); border-right: 1px solid var(--border); }
+  .card-body { padding: 44px 40px 40px; position: relative; z-index: 2; }
+  .step-label { font-size: 9px; letter-spacing: 4px; color: var(--gold); text-transform: uppercase; margin-bottom: 10px; }
+  .card-body h2 { font-family: var(--fd); font-size: 54px; line-height: 0.92; color: var(--text); margin-bottom: 30px; }
+
+  /* FIELDS */
+  .field { margin-bottom: 18px; }
+  .field label { display: block; font-size: 10px; letter-spacing: 3px; color: var(--muted); text-transform: uppercase; margin-bottom: 7px; }
+  .field input, .field textarea, .field select {
+    width: 100%; background: var(--input-bg); border: 1px solid var(--border);
+    color: var(--text); font-family: var(--fb); font-size: 15px;
+    padding: 13px 15px; outline: none; transition: border-color 0.2s;
+    appearance: none; -webkit-appearance: none; border-radius: 0;
+  }
+  .field input::placeholder, .field textarea::placeholder { color: var(--border); }
+  .field input:focus, .field textarea:focus, .field select:focus { border-color: var(--gold); }
+  .field textarea { resize: none; height: 90px; }
+  .field select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 15px center; padding-right: 38px; cursor: none; }
+
+  .yn { display: flex; gap: 10px; }
+  .yn-btn { flex: 1; background: var(--input-bg); border: 1px solid var(--border); color: var(--muted); font-family: var(--fd); font-size: 18px; letter-spacing: 2px; padding: 13px; cursor: none; text-align: center; transition: all 0.15s; }
+  .yn-btn.active { border-color: var(--gold); color: var(--gold); background: rgba(212,168,67,0.06); }
+
+  .checks { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .check-item { display: flex; align-items: center; gap: 10px; background: var(--input-bg); border: 1px solid var(--border); padding: 11px 13px; cursor: none; transition: border-color 0.2s; user-select: none; }
+  .check-item.selected { border-color: var(--gold); }
+  .check-box { width: 14px; height: 14px; border: 1px solid var(--muted); flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+  .check-item.selected .check-box { background: var(--gold); border-color: var(--gold); }
+  .check-tick { font-size: 9px; color: #000; display: none; }
+  .check-item.selected .check-tick { display: block; }
+  .check-item span { font-size: 11px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; }
+  .check-item.selected span { color: var(--text); }
+
+  .btn-row { display: flex; gap: 10px; margin-top: 28px; }
+  .btn-back { background: transparent; border: 1px solid var(--border); color: var(--muted); font-family: var(--fd); font-size: 16px; letter-spacing: 2px; padding: 13px 22px; cursor: none; transition: all 0.15s; }
+  .btn-back:hover { border-color: var(--muted); color: var(--text); }
+  .btn-next { flex: 1; background: var(--gold); border: none; color: #000; font-family: var(--fd); font-size: 20px; letter-spacing: 3px; padding: 13px; cursor: none; transition: background 0.15s; }
+  .btn-next:hover { background: var(--gold2); }
+
+  .step-panel { display: none; }
+  .step-panel.show { display: block; }
+
+  .success { display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 60px 40px; min-height: 360px; }
+  .success.show { display: flex; }
+  .success .ring { width: 60px; height: 60px; border-radius: 50%; border: 1px solid var(--gold); display: flex; align-items: center; justify-content: center; margin-bottom: 26px; }
+  .success .ring svg { width: 26px; height: 26px; stroke: var(--gold); fill: none; stroke-width: 1.5; }
+  .success h3 { font-family: var(--fd); font-size: 50px; line-height: 0.92; color: var(--text); margin-bottom: 14px; }
+  .success h3 em { color: var(--gold); font-style: normal; }
+  .success p { font-size: 13px; color: var(--muted); line-height: 1.9; max-width: 280px; }
+
+  .sending { display: none; align-items: center; justify-content: center; padding: 60px 40px; min-height: 200px; }
+  .sending.show { display: flex; }
+  .spinner { width: 32px; height: 32px; border: 2px solid var(--border); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .error-msg { font-size: 11px; color: #cc4444; letter-spacing: 1px; margin-top: 6px; display: none; }
+  .error-msg.show { display: block; }
+
+  footer { border-top: 1px solid var(--border); padding: 24px 48px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+  .f-logo { font-family: var(--fd); font-size: 20px; letter-spacing: 5px; color: var(--muted); }
+  .f-logo em { color: var(--gold); font-style: normal; }
+  .f-link { font-size: 10px; letter-spacing: 2px; color: var(--muted); text-decoration: none; text-transform: uppercase; transition: color 0.2s; }
+  .f-link:hover { color: var(--gold); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 600px) {
+    * { cursor: auto !important; }
+    #cursor-dot, #cursor-ring { display: none; }
+    nav { padding: 14px 20px; }
+    .nav-logo { font-size: 22px; letter-spacing: 4px; }
+    .hero { padding: 48px 20px 36px; }
+    .how { margin-bottom: 40px; }
+    .card-body { padding: 32px 22px 28px; }
+    .card-body h2 { font-size: 44px; }
+    .ghost-num { font-size: 150px; }
+    .checks { gap: 6px; }
+    footer { padding: 18px 20px; }
+  }
+  @media (max-width: 360px) {
+    .card-body { padding: 24px 16px 20px; }
+    .checks { grid-template-columns: 1fr; }
+  }
+
+  /* Light mode bg pattern tweak */
+  @media (prefers-color-scheme: light) {
+    body::before { background-image: radial-gradient(circle, #CCCBC6 1px, transparent 1px); opacity: 0.4; }
+    body::after { background: radial-gradient(ellipse at top right, rgba(212,168,67,0.08) 0%, transparent 70%); }
+  }
+</style>
+</head>
+<body>
+
+<!-- CURSOR -->
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
+
+<!-- BG ACCENTS -->
+<div class="bg-accent-bl"></div>
+<div class="bg-lines"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="https://bamadeal.agency" class="nav-logo">BA.MA <em>DEAL</em></a>
+  <a href="https://bamadeal.agency" class="nav-back">← Back to site</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="badge">No risk · No cost · No commitment</div>
+  <h1>GET YOUR<br><em>FREE</em><br>SITE PREVIEW</h1>
+  <p>We design a full preview of your website before you pay a single dollar. If you love it — we launch. If not — no hard feelings.</p>
+</div>
+
+<!-- HOW -->
+<div class="how">
+  <div class="how-step"><div class="how-num">01</div><div class="how-txt">Fill this<br>form</div></div>
+  <div class="how-step"><div class="how-num">02</div><div class="how-txt">We build<br>your preview</div></div>
+  <div class="how-step"><div class="how-num">03</div><div class="how-txt">You approve<br>& we launch</div></div>
+</div>
+
+<!-- FORM -->
+<div class="form-wrap">
+  <div class="card">
+    <div class="progress-track"><div class="progress-fill" id="progress" style="width:33%"></div></div>
+    <div class="ghost-num" id="ghost">1</div>
+    <div class="corner tl"></div>
+    <div class="corner br"></div>
+
+    <div class="card-body step-panel show" id="step1">
+      <div class="step-label">Step 01 of 03</div>
+      <h2>YOUR<br>BUSINESS</h2>
+      <div class="field"><label>Business Name</label><input type="text" id="biz_name" placeholder="e.g. King Cuts Barbershop"></div>
+      <div class="field">
+        <label>Type of Business</label>
+        <select id="biz_type">
+          <option value="" disabled selected>Select your industry</option>
+          <option>Barbershop / Hair Salon</option><option>Lash / Nail Tech</option>
+          <option>Mobile Detailing</option><option>Restaurant / Food</option>
+          <option>Fitness / Personal Trainer</option><option>Real Estate</option>
+          <option>Contractor / Home Services</option><option>Retail / E-commerce</option>
+          <option>Photography / Videography</option><option>Other</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Do you already have a website?</label>
+        <div class="yn">
+          <div class="yn-btn" id="yn-yes" onclick="setYN('yes')">YES</div>
+          <div class="yn-btn active" id="yn-no" onclick="setYN('no')">NO</div>
+        </div>
+      </div>
+      <div id="url-field" class="field" style="display:none">
+        <label>Current website URL</label>
+        <input type="url" id="existing_url" placeholder="https://yourbusiness.com">
+      </div>
+      <div class="error-msg" id="err1">Please fill in your business name.</div>
+      <div class="btn-row"><button class="btn-next" onclick="toStep2()">NEXT →</button></div>
+    </div>
+
+    <div class="card-body step-panel" id="step2">
+      <div class="step-label">Step 02 of 03</div>
+      <h2>YOUR<br>CONTACT</h2>
+      <div class="field"><label>Full Name</label><input type="text" id="name" placeholder="Your name"></div>
+      <div class="field"><label>Email</label><input type="email" id="email" placeholder="you@email.com"></div>
+      <div class="field"><label>Phone / WhatsApp</label><input type="tel" id="phone" placeholder="+1 (407) 000-0000"></div>
+      <div class="error-msg" id="err2">Please enter a valid email.</div>
+      <div class="btn-row">
+        <button class="btn-back" onclick="toStep(1)">←</button>
+        <button class="btn-next" onclick="toStep3()">NEXT →</button>
+      </div>
+    </div>
+
+    <div class="card-body step-panel" id="step3">
+      <div class="step-label">Step 03 of 03</div>
+      <h2>YOUR<br>PREVIEW</h2>
+      <div class="field">
+        <label>Pages you want</label>
+        <div class="checks">
+          <div class="check-item selected" onclick="toggle(this)"><div class="check-box"><span class="check-tick">✓</span></div><span>Home</span></div>
+          <div class="check-item selected" onclick="toggle(this)"><div class="check-box"><span class="check-tick">✓</span></div><span>Services</span></div>
+          <div class="check-item selected" onclick="toggle(this)"><div class="check-box"><span class="check-tick">✓</span></div><span>About</span></div>
+          <div class="check-item selected" onclick="toggle(this)"><div class="check-box"><span class="check-tick">✓</span></div><span>Contact</span></div>
+          <div class="check-item" onclick="toggle(this)"><div class="check-box"><span class="check-tick">✓</span></div><span>Gallery</span></div>
+          <div class="check-item" onclick="toggle(this)"><div class="check-box"><span class="check-tick">✓</span></div><span>Booking</span></div>
+          <div class="check-item" onclick="toggle(this)"><div class="check-box"><span class="check-tick">✓</span></div><span>Menu / Prices</span></div>
+          <div class="check-item" onclick="toggle(this)"><div class="check-box"><span class="check-tick">✓</span></div><span>Reviews</span></div>
+        </div>
+      </div>
+      <div class="field" style="margin-top:18px">
+        <label>Anything else we should know?</label>
+        <textarea id="notes" placeholder="Colors, style, competitors to check..."></textarea>
+      </div>
+      <div class="btn-row">
+        <button class="btn-back" onclick="toStep(2)">←</button>
+        <button class="btn-next" onclick="submitForm()">GET MY PREVIEW</button>
+      </div>
+    </div>
+
+    <div class="sending" id="sending"><div class="spinner"></div></div>
+
+    <div class="success" id="success">
+      <div class="ring"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <h3>WE'VE<br>GOT YOUR<br><em>REQUEST.</em></h3>
+      <p>We'll send your free site preview within <strong style="color:var(--text)">48 hours.</strong><br>Check your email — something good is coming.</p>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="f-logo">BA.MA <em>DEAL</em></div>
+  <a href="https://bamadeal.agency" class="f-link">bamadeal.agency</a>
+</footer>
+
+<script>
+  // ── CURSOR ──
+  const dot = document.getElementById('cursor-dot');
+  const ring = document.getElementById('cursor-ring');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    dot.style.left = mx + 'px';
+    dot.style.top = my + 'px';
+  });
+
+  function lerp(a, b, n) { return a + (b - a) * n; }
+  function animRing() {
+    rx = lerp(rx, mx, 0.12);
+    ry = lerp(ry, my, 0.12);
+    ring.style.left = rx + 'px';
+    ring.style.top = ry + 'px';
+    requestAnimationFrame(animRing);
+  }
+  animRing();
+
+  document.querySelectorAll('a, button, .check-item, .yn-btn, select, input, textarea').forEach(el => {
+    el.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
+    el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
+  });
+  document.addEventListener('mousedown', () => document.body.classList.add('clicking'));
+  document.addEventListener('mouseup', () => document.body.classList.remove('clicking'));
+
+  // ── FORM ──
+  let hasWebsite = 'no';
+  function setYN(v) {
+    hasWebsite = v;
+    document.getElementById('yn-yes').classList.toggle('active', v==='yes');
+    document.getElementById('yn-no').classList.toggle('active', v==='no');
+    document.getElementById('url-field').style.display = v==='yes' ? 'block' : 'none';
+  }
+  function toggle(el) { el.classList.toggle('selected'); }
+  function toStep(n) {
+    document.querySelectorAll('.step-panel').forEach(p=>p.classList.remove('show'));
+    document.getElementById('step'+n).classList.add('show');
+    document.getElementById('progress').style.width = ['33%','66%','100%'][n-1];
+    document.getElementById('ghost').textContent = n;
+    document.getElementById('ghost').style.opacity = '1';
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  function toStep2() {
+    const v = document.getElementById('biz_name').value.trim();
+    const e = document.getElementById('err1');
+    if(!v){e.classList.add('show');document.getElementById('biz_name').focus();return;}
+    e.classList.remove('show'); toStep(2);
+  }
+  function toStep3() {
+    const v = document.getElementById('email').value.trim();
+    const e = document.getElementById('err2');
+    if(!v||!v.includes('@')){e.classList.add('show');document.getElementById('email').focus();return;}
+    e.classList.remove('show'); toStep(3);
+  }
+  async function submitForm() {
+    const pages = [...document.querySelectorAll('.check-item.selected span')].map(s=>s.textContent).join(', ');
+    const data = {
+      business_name: document.getElementById('biz_name').value,
+      business_type: document.getElementById('biz_type').value,
+      has_website: hasWebsite,
+      existing_url: document.getElementById('existing_url').value||'N/A',
+      name: document.getElementById('name').value,
+      email: document.getElementById('email').value,
+      phone: document.getElementById('phone').value,
+      pages_wanted: pages,
+      notes: document.getElementById('notes').value||'None'
+    };
+    document.getElementById('step3').classList.remove('show');
+    document.getElementById('ghost').style.opacity = '0';
+    document.getElementById('sending').classList.add('show');
+    document.getElementById('progress').style.width = '100%';
+    try {
+      await fetch('https://formspree.io/f/xlgklbrw', {
+        method:'POST',
+        headers:{'Content-Type':'application/json','Accept':'application/json'},
+        body:JSON.stringify(data)
+      });
+    } catch(e){}
+    document.getElementById('sending').classList.remove('show');
+    document.getElementById('success').classList.add('show');
+  }
+</script>
+</body>
+</html>
